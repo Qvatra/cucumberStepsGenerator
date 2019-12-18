@@ -7,16 +7,20 @@ module.exports.helpers = helpers
 module.exports.generateSteps = config => {
   const { actions, targets, areas, paths } = config
 
+  const headerImportInjections = injectionsObj =>
+    _.map(injectionsObj, (path, name) => `import ${name} from '${path}'`).join('\n')
+
   const header = `/* eslint-disable */
 import { client } from 'nightwatch-api'
 import { Then, Before } from 'cucumber'
 import { xpath, variables } from '${paths.config}'
-import { helpers } from 'cucumber-steps-generator'
+import stepsGenerator from 'cucumber-steps-generator'
+${headerImportInjections(paths.importInjections)}
 
 let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
 Before((testCase, cb) => {
   const feature = testCase.sourceLocation.uri.substr(13).split('.')[0]
-  const scenario = testCase.pickle.name.replace(helpers.illegalFilenameCharactersRegExp, '')
+  const scenario = testCase.pickle.name.replace(stepsGenerator.helpers.illegalFilenameCharactersRegExp, '')
   const settings = client.globals.test_settings.visual_regression_settings
   baseline_screenshots_path = \`\${settings.baseline_screenshots_path}/\${feature}/\${scenario}\`
   latest_screenshots_path = \`\${settings.latest_screenshots_path}/\${feature}/\${scenario}\`
@@ -24,7 +28,7 @@ Before((testCase, cb) => {
   cb()
 })
 
-const context = { client, xpath, variables, helpers }\n\n`
+const context = { client, xpath, variables, helpers: stepsGenerator.helpers }\n\n`
 
   const targetPlaceholder = '{target}'
   const placeholdersRegex = /{string}|{number}|{integer}/g
@@ -113,8 +117,6 @@ const context = { client, xpath, variables, helpers }\n\n`
     if (err) {
       console.error(err)
     }
-    console.log('#')
-    console.log(`# CONGRATS! The steps were generated into ${paths.generatedSteps}`)
-    console.log('#')
+    console.log('\x1B[33m%s\x1B[0m', `CONGRATS! The steps were generated into ${paths.generatedSteps}`)
   })
 }
