@@ -24,7 +24,7 @@ Before((testCase, cb) => {
   cb()
 })
 
-const context = { client, xpath, variables }\n\n`
+const context = { client, xpath, variables, helpers }\n\n`
 
   const targetPlaceholder = '{target}'
   const placeholdersRegex = /{string}|{number}|{integer}/g
