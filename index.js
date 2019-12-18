@@ -4,8 +4,10 @@ const { helpers } = require('./helpers')
 
 module.exports.helpers = helpers
 
-module.exports.generateSteps = config => {
-  const { actions, targets, areas, paths } = config
+module.exports.generateSteps = ({ generatorConfig }) => {
+  const actions = require(generatorConfig.actionsPath)
+  const targets = require(generatorConfig.targetsPath)
+  const areas = require(generatorConfig.areasPath)
 
   const headerImportInjections = injectionsObj =>
     _.map(injectionsObj, (path, name) => `import ${name} from '${path}'`).join('\n')
@@ -13,9 +15,9 @@ module.exports.generateSteps = config => {
   const header = `/* eslint-disable */
 import { client } from 'nightwatch-api'
 import { Then, Before } from 'cucumber'
-import { xpath, variables } from '${paths.config}'
+import { xpath, variables } from '${generatorConfig.configPath}'
 import stepsGenerator from 'cucumber-steps-generator'
-${headerImportInjections(paths.importInjections)}
+${headerImportInjections(_.get(generatorConfig, 'outputFile.importInjections', []))}
 
 let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
 Before((testCase, cb) => {
@@ -113,10 +115,10 @@ const context = { client, xpath, variables, helpers: stepsGenerator.helpers }\n\
     }).join('')
   }).join('')
 
-  fs.writeFile(paths.generatedSteps, `${header}${body}`, err => {
+  fs.writeFile(generatorConfig.outputFile.path, `${header}${body}`, err => {
     if (err) {
       console.error(err)
     }
-    console.log('\x1B[33m%s\x1B[0m', `CONGRATS! The steps were generated into ${paths.generatedSteps}`)
+    console.log('\x1B[33m%s\x1B[0m', `CONGRATS! Cucumber steps were generated into ${generatorConfig.outputFile.path}`)
   })
 }
