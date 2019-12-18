@@ -23,8 +23,6 @@ module.exports.helpers = {
       .replace(/(normalize-spacetext)/g, '_text')
       .replace(/=|(__)|\//g, '_')
       .replace(illegalFilenameCharactersRegExp, '_'),
-  randomStringByMaxLenght: maxLength => Math.random().toString(36).substring(2, maxLength + 2),
-  randomNumberInRange: (max, min) => Math.floor(Math.random() * (max - min + 1)) + min,
   lastElement: xpath => `(${xpath})[last()]`,
   elementAtPosition: (xpath, number) => `(${xpath})[${number}]`,
   illegalFilenameCharactersRegExp
