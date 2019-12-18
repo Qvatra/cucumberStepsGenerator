@@ -43,7 +43,7 @@ module.exports.generate = config => {
 import { client } from 'nightwatch-api'
 import { Then, Before } from 'cucumber'
 import { xpath, variables } from '${paths.config}'
-import { pathToFileName, randomString, getLastElement, getElementAtPosition, randomNumber, illegalFilenameCharactersRegExp } from '${paths.generator}'
+import { pathToFileName, randomString, getLastElement, getElementAtPosition, randomNumber, illegalFilenameCharactersRegExp } from 'cucumber-steps-generator'
 
 let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
 Before((testCase, cb) => {
