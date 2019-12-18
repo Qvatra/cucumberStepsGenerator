@@ -4,7 +4,7 @@ const { helpers } = require('./helpers')
 
 module.exports.helpers = helpers
 
-module.exports = config => {
+module.exports.generateSteps = config => {
   const { actions, targets, areas, paths } = config
 
   const header = `/* eslint-disable */
