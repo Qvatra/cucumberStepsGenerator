@@ -2,9 +2,7 @@ const fs = require('fs')
 const _ = require('lodash')
 const { helpers } = require('./helpers')
 
-module.exports.helpers = helpers
-
-module.exports.generateSteps = ({ generatorConfig }) => {
+const generateSteps = ({ generatorConfig }) => {
   const actions = require(generatorConfig.actionsPath)
   const targets = require(generatorConfig.targetsPath)
   const areas = require(generatorConfig.areasPath)
@@ -16,13 +14,13 @@ module.exports.generateSteps = ({ generatorConfig }) => {
 import { client } from 'nightwatch-api'
 import { Then, Before } from 'cucumber'
 import { xpath, variables } from '${generatorConfig.configPath}'
-import stepsGenerator from 'cucumber-steps-generator'
+import stepsGeneratorFunctions from 'cucumber-steps-generator'
 ${headerImportInjections(_.get(generatorConfig, 'outputFile.importInjections', []))}
 
 let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
 Before((testCase, cb) => {
   const feature = testCase.sourceLocation.uri.substr(13).split('.')[0]
-  const scenario = testCase.pickle.name.replace(stepsGenerator.helpers.illegalFilenameCharactersRegExp, '')
+  const scenario = testCase.pickle.name.replace(stepsGeneratorFunctions.illegalFilenameCharactersRegExp, '')
   const settings = client.globals.test_settings.visual_regression_settings
   baseline_screenshots_path = \`\${settings.baseline_screenshots_path}/\${feature}/\${scenario}\`
   latest_screenshots_path = \`\${settings.latest_screenshots_path}/\${feature}/\${scenario}\`
@@ -30,7 +28,7 @@ Before((testCase, cb) => {
   cb()
 })
 
-const context = { client, xpath, variables, helpers: stepsGenerator.helpers }\n\n`
+const context = { client, xpath, variables, helpers: stepsGeneratorFunctions }\n\n`
 
   const targetPlaceholder = '{target}'
   const placeholdersRegex = /{string}|{number}|{integer}/g
@@ -122,3 +120,5 @@ const context = { client, xpath, variables, helpers: stepsGenerator.helpers }\n\
     console.log('\x1B[33m%s\x1B[0m', `CONGRATS! Cucumber steps were generated into ${generatorConfig.outputFile.path}`)
   })
 }
+
+module.exports = Object.assign(helpers, { generateSteps })
