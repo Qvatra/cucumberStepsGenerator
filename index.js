@@ -7,15 +7,16 @@ const generateSteps = ({ generatorConfig }) => {
   const targets = require(generatorConfig.targetsPath)
   const areas = require(generatorConfig.areasPath)
 
-  const headerImportInjections = injectionsObj =>
-    _.map(injectionsObj, (path, name) => `import ${name} from '${path}'`).join('\n')
+  const importInjections = _.get(generatorConfig, 'outputFile.importInjections', {})
+  const headerImportInjections = _.map(importInjections, (path, name) => `import ${name} from '${path}'`).join('\n')
+  const importInjectionsNames = Object.keys(importInjections)
 
   const header = `/* eslint-disable */
 import { client } from 'nightwatch-api'
 import { Then, Before } from 'cucumber'
 import { xpath, variables } from '${generatorConfig.configPath}'
 import stepsGeneratorFunctions from 'cucumber-steps-generator'
-${headerImportInjections(_.get(generatorConfig, 'outputFile.importInjections', []))}
+${headerImportInjections}
 
 let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
 Before((testCase, cb) => {
@@ -28,7 +29,7 @@ Before((testCase, cb) => {
   cb()
 })
 
-const context = { client, xpath, variables, helpers: stepsGeneratorFunctions }\n\n`
+const context = { client, xpath, variables, helpers: stepsGeneratorFunctions, injections: { ${importInjectionsNames.join(', ')} } }\n\n`
 
   const targetPlaceholder = '{target}'
   const placeholdersRegex = /{string}|{number}|{integer}/g
