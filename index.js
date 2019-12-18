@@ -118,8 +118,3 @@ const context = { client, xpath, variables }\n\n`
     console.log('#')
   })
 }
-
-// Possible improvements:
-// 1. aria doesnt not work for multiple targets declared with 'OR': target = target1 | target2
-//    It renders: "//aria//target1 | target2" instead of "//aria//target1 | //aria//target2"
-//    to get it working 'OR' should be declared in a single target selector: //div[@target="1" or @target="2"]
