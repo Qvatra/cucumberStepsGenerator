@@ -1,40 +1,8 @@
 const fs = require('fs')
 const _ = require('lodash')
+const { helpers } = require('./helpers')
 
-module.exports.extendXpath = xpath => {
-  const rules = [
-    {
-      match: /has-class\(['"]([^'"]+)['"]\)/g,
-      replace: 'contains(concat(" ", normalize-space(@class), " "), " $1 ")'
-    },
-    {
-      match: /text\(\)/g,
-      replace: 'normalize-space(text())'
-    }
-  ]
-  return _.reduce(rules, (result, rule) => _.replace(result, rule.match, rule.replace), xpath)
-}
-
-const illegalFilenameCharactersRegExp = /[\<\>\:\"\/\\\|\?\*]/g
-module.exports.illegalFilenameCharactersRegExp = illegalFilenameCharactersRegExp
-
-module.exports.pathToFileName = string => {
-  return string
-    .replace(/(\sand\s)/g, '_and_')
-    .replace(/[\s"'()[\],@]|(\/\/)/g, '')
-    .replace(/(containsconcatnormalize-spaceclass)/g, '_with_class_')
-    .replace(/(normalize-spacetext)/g, '_text')
-    .replace(/=|(__)|\//g, '_')
-    .replace(illegalFilenameCharactersRegExp, '_')
-}
-
-module.exports.randomString = maxLength => Math.random().toString(36).substring(2, maxLength + 2)
-
-module.exports.getLastElement = xpath => `(${xpath})[last()]`
-
-module.exports.getElementAtPosition = (xpath, number) => `(${xpath})[${number}]`
-
-module.exports.randomNumber = (max, min) => Math.floor(Math.random() * (max - min + 1)) + min
+module.exports.helpers = helpers
 
 module.exports.generate = config => {
   const { actions, targets, areas, paths } = config
@@ -43,12 +11,12 @@ module.exports.generate = config => {
 import { client } from 'nightwatch-api'
 import { Then, Before } from 'cucumber'
 import { xpath, variables } from '${paths.config}'
-import { pathToFileName, randomString, getLastElement, getElementAtPosition, randomNumber, illegalFilenameCharactersRegExp } from 'cucumber-steps-generator'
+import { helpers } from 'cucumber-steps-generator'
 
 let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
 Before((testCase, cb) => {
   const feature = testCase.sourceLocation.uri.substr(13).split('.')[0]
-  const scenario = testCase.pickle.name.replace(illegalFilenameCharactersRegExp, '')
+  const scenario = testCase.pickle.name.replace(helpers.illegalFilenameCharactersRegExp, '')
   const settings = client.globals.test_settings.visual_regression_settings
   baseline_screenshots_path = \`\${settings.baseline_screenshots_path}/\${feature}/\${scenario}\`
   latest_screenshots_path = \`\${settings.latest_screenshots_path}/\${feature}/\${scenario}\`
@@ -146,7 +114,7 @@ const context = { client, xpath, variables }\n\n`
       console.error(err)
     }
     console.log('#')
-    console.log(`# CONGRATS! The steps are generated into ${paths.generatedSteps}`)
+    console.log(`# CONGRATS! The steps were generated into ${paths.generatedSteps}`)
     console.log('#')
   })
 }
