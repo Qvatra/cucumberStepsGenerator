@@ -1,4 +1,5 @@
 # Cucumber steps generator
+provides a DRY way of writing cucumber steps using combinations of predefined set of actions, targets and areas
 
 ## Installing
 ```npm i -D https://github.com/Qvatra/cucumberStepsGenerator.git```
@@ -15,6 +16,6 @@
 5. *illegalFilenameCharactersRegExp* - regExp for maching illegal filenames
 
 ## Possible improvements:
-1. Aria doesnt not work for multiple targets declared with 'OR': ```target = target1 | target2```  
-   It renders: ```//aria//target1 | target2``` instead of ```//aria//target1 | //aria//target2```  
+1. Area doesnt not work for multiple targets declared with 'OR': ```target = target1 | target2```  
+   It renders: ```//area//target1 | target2``` instead of ```//area//target1 | //area//target2```  
    To get it working 'OR' should be declared in a single target selector: ```//div[@target="1" or @target="2"]```
