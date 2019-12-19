@@ -2,7 +2,7 @@ const fs = require('fs')
 const _ = require('lodash')
 const { helpers } = require('./helpers')
 
-const generateSteps = ({ generatorConfig }) => {
+const generateSteps = generatorConfig => {
   const actions = require(generatorConfig.actionsPath)
   const targets = require(generatorConfig.targetsPath)
   const areas = require(generatorConfig.areasPath)
