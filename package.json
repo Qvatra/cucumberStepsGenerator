@@ -1,6 +1,6 @@
 {
   "name": "cucumber-steps-generator",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "cucumber steps generator",
   "main": "index.js",
   "scripts": {

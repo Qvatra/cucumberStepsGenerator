@@ -1,35 +1,24 @@
 const fs = require('fs')
 const _ = require('lodash')
-const { helpers } = require('./helpers')
+const utils = require('./utils')
 
 const generateSteps = generatorConfig => {
   const actions = require(generatorConfig.actionsPath)
   const targets = require(generatorConfig.targetsPath)
   const areas = require(generatorConfig.areasPath)
-
-  const importInjections = _.get(generatorConfig, 'outputFile.importInjections', {})
-  const headerImportInjections = _.map(importInjections, (path, name) => `import ${name} from '${path}'`).join('\n')
-  const importInjectionsNames = Object.keys(importInjections)
+  const injections = _.get(generatorConfig, 'outputFile.injections', {})
 
   const header = `/* eslint-disable */
 import { client } from 'nightwatch-api'
-import { Then, Before } from 'cucumber'
-import { xpath, variables } from '${generatorConfig.configPath}'
-import stepsGeneratorFunctions from 'cucumber-steps-generator'
-${headerImportInjections}
-
-let baseline_screenshots_path, latest_screenshots_path, diff_screenshots_path
-Before((testCase, cb) => {
-  const feature = testCase.sourceLocation.uri.substr(13).split('.')[0]
-  const scenario = testCase.pickle.name.replace(stepsGeneratorFunctions.illegalFilenameCharactersRegExp, '')
-  const settings = client.globals.test_settings.visual_regression_settings
-  baseline_screenshots_path = \`\${settings.baseline_screenshots_path}/\${feature}/\${scenario}\`
-  latest_screenshots_path = \`\${settings.latest_screenshots_path}/\${feature}/\${scenario}\`
-  diff_screenshots_path = \`\${settings.diff_screenshots_path}/\${feature}/\${scenario}\`
-  cb()
-})
-
-const context = { client, xpath, variables, helpers: stepsGeneratorFunctions, injections: { ${importInjectionsNames.join(', ')} } }\n\n`
+import { Then } from 'cucumber'
+${_.get(generatorConfig, 'header', '')}
+const context = { 
+  client, 
+  xpath: require('${generatorConfig.configPath}').xpath, 
+  variables: require('${generatorConfig.configPath}').variables,
+  utils: require('cucumber-steps-generator'),
+  injections: { ${_.map(injections, (path, name) => `${name}: require('${path}')`).join(', ')} } 
+}\n`
 
   const targetPlaceholder = '{target}'
   const placeholdersRegex = /{string}|{number}|{integer}/g
@@ -122,4 +111,4 @@ const context = { client, xpath, variables, helpers: stepsGeneratorFunctions, in
   })
 }
 
-module.exports = Object.assign(helpers, { generateSteps })
+module.exports = Object.assign(utils, { generateSteps })

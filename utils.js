@@ -1,19 +1,23 @@
-const _ = require('lodash')
 const illegalFilenameCharactersRegExp = /[\<\>\:\"\/\\\|\?\*]/g
 
-module.exports.helpers = {
+module.exports = {
   extendXpath: xpath => {
+    const funcWithStringArgRegEx = name => new RegExp(`${name}\\(['"]([^'"]+)['"]\\)`, 'g')
     const rules = [
       {
-        match: /has-class\(['"]([^'"]+)['"]\)/g,
+        match: funcWithStringArgRegEx('has-class'),
         replace: 'contains(concat(" ", normalize-space(@class), " "), " $1 ")'
       },
       {
-        match: /text\(\)/g,
-        replace: 'normalize-space(text())'
+        match: funcWithStringArgRegEx('has-text'),
+        replace: 'contains(text(), "$1")'
+      },
+      {
+        match: funcWithStringArgRegEx('text-is'),
+        replace: 'normalize-space(text())="$1")'
       }
     ]
-    return _.reduce(rules, (result, rule) => _.replace(result, rule.match, rule.replace), xpath)
+    return rules.reduce((result, rule) => result.replace(rule.match, rule.replace), xpath)
   },
   xpathToFileName: xpath =>
     xpath
