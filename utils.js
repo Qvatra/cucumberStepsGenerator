@@ -28,5 +28,6 @@ module.exports = {
       .replace(illegalFilenameCharactersRegExp, ''),
   lastElement: xpath => `(${xpath})[last()]`,
   elementAtPosition: (xpath, number) => `(${xpath})[${number}]`,
-  illegalFilenameCharactersRegExp
+  illegalFilenameCharactersRegExp,
+  funcRegEx
 }
