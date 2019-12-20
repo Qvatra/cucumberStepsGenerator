@@ -11,13 +11,13 @@ const generateSteps = generatorConfig => {
   const header = `/* eslint-disable */
 import { client } from 'nightwatch-api'
 import { Then } from 'cucumber'
-${_.get(generatorConfig, 'header', '')}
-const context = { 
-  client, 
-  xpath: require('${generatorConfig.configPath}').xpath, 
+
+const context = {
+  client,
+  xpath: require('${generatorConfig.configPath}').xpath,
   variables: require('${generatorConfig.configPath}').variables,
   utils: require('cucumber-steps-generator'),
-  injections: { ${_.map(injections, (path, name) => `${name}: require('${path}')`).join(', ')} } 
+  injections: { ${_.map(injections, (path, name) => `${name}: require('${path}')`).join(', ')} }
 }\n`
 
   const targetPlaceholder = '{target}'
