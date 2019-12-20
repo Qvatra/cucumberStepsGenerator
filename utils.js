@@ -13,8 +13,8 @@ const xpathFunctions = [
   },
   {
     name: 'text-is',
-    replace: 'normalize-space(text())="$1")',
-    format: /normalize-space\(text\(\)\)=/g
+    replace: 'normalize-space(text())="$1"',
+    format: /normalize-space\(text\(\)\)/g
   }
 ]
 
@@ -22,9 +22,11 @@ module.exports = {
   extendXpath: xpath =>
     xpathFunctions.reduce((result, rule) => result.replace(funcRegEx(rule.name), rule.replace), xpath),
   xpathToFileName: xpath =>
-    xpathFunctions.reduce((result, rule) => result.replace(rule.format, `${rule.name}(`), xpath)
+    xpathFunctions.reduce((result, rule) => result.replace(rule.format, `${rule.name}`), xpath)
       .replace(/(\sand\s)/g, '_and_')
       .replace(/(\sor\s)/g, '_or_')
+      .replace(/\"\)/g, '')
+      .replace(/\(\"|=\"|\s\"/g, '_')
       .replace(illegalFilenameCharactersRegExp, ''),
   lastElement: xpath => `(${xpath})[last()]`,
   elementAtPosition: (xpath, number) => `(${xpath})[${number}]`,

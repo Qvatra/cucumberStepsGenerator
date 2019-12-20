@@ -23,7 +23,7 @@ describe('utils', () => {
     })
 
     it('extends xpath with text-is', () => {
-      expect(extendXpath('//div[text-is("exact-text")]')).toEqual('//div[normalize-space(text())="exact-text")]')
+      expect(extendXpath('//div[text-is("exact-text")]')).toEqual('//div[normalize-space(text())="exact-text"]')
     })
   })
 
@@ -41,15 +41,15 @@ describe('utils', () => {
     })
 
     it('formats has-class extended xpath', () => {
-      expect(xpathToFileName('//div[contains(concat(" ", normalize-space(@class), " "), " class1 ")]')).toBe('div[has-class(class1)]')
+      expect(xpathToFileName('//div[contains(concat(" ", normalize-space(@class), " "), " class1 ")]')).toBe('div[has-class_class1]')
     })
 
     it('formats has-text extended xpath', () => {
-      expect(xpathToFileName('//div[contains(text(), "text1")]')).toBe('div[has-text(text1)]')
+      expect(xpathToFileName('//div[contains(text(), "text1")]')).toBe('div[has-text_text1]')
     })
 
     it('formats text-is extended xpath', () => {
-      expect(xpathToFileName('//div[normalize-space(text())="exact-text")]')).toBe('div[text-is(exact-text)]')
+      expect(xpathToFileName('//div[normalize-space(text())="exact-text"]')).toBe('div[text-is_exact-text]')
     })
   })
 
