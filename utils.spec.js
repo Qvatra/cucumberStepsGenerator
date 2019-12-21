@@ -20,11 +20,11 @@ describe('utils', () => {
     })
 
     it('extends xpath with has-text("string")', () => {
-      expect(extendXpath(`//div[has-text("I'm some text #1")]`)).toEqual(`//div[contains(text(), "I'm some text #1")]`)
+      expect(extendXpath(`//*[@id="app" and has-text("I'm some text #1")]`)).toEqual(`//*[@id="app" and contains(text(), "I'm some text #1")]`)
     })
 
     it('extends xpath with text-is("string")', () => {
-      expect(extendXpath(`//div[text-is("I'm some exact text, 100%")]`)).toEqual(`//div[normalize-space(text())="I'm some exact text, 100%"]`)
+      expect(extendXpath(`//div[text-is("I'm some exact text, 100%") or @id="app"]`)).toEqual(`//div[normalize-space(text())="I'm some exact text, 100%" or @id="app"]`)
     })
   })
 
@@ -34,23 +34,27 @@ describe('utils', () => {
     })
 
     it('formats and inside xpath selector', () => {
-      expect(xpathToFileName(' and ')).toBe('_and_')
+      expect(xpathToFileName('//a[@id="link" and contains(text(), "text1")]')).toBe('a_with_id_link_and_with_text_text1')
     })
 
     it('formats or inside xpath selector', () => {
-      expect(xpathToFileName(' or ')).toBe('_or_')
+      expect(xpathToFileName('//*[contains(text(), "text1") or @href="ref" or text()="Submit"]')).toBe('el_with_text_text1_or_with_href_ref_or_text_submit')
     })
 
     it('formats has-class extended xpath', () => {
-      expect(xpathToFileName('//div[contains(concat(" ", normalize-space(@class), " "), " class1 ")]')).toBe('div[has-class_class1]')
+      expect(xpathToFileName('//div[contains(concat(" ", normalize-space(@class), " "), " class1 ")]')).toBe('div_with_class_class1')
     })
 
     it('formats has-text extended xpath', () => {
-      expect(xpathToFileName('//div[contains(text(), "text1")]')).toBe('div[has-text_text1]')
+      expect(xpathToFileName('//div[contains(text(), "text1")]')).toBe('div_with_text_text1')
     })
 
     it('formats text-is extended xpath', () => {
-      expect(xpathToFileName('//div[normalize-space(text())="exact-text"]')).toBe('div[text-is_exact-text]')
+      expect(xpathToFileName('//div[normalize-space(text())="exact-text"]')).toBe('div_with_text_exact-text')
+    })
+
+    it('converts to lowercase', () => {
+      expect(xpathToFileName('//div[@class="UPPERCASE"]')).toBe('div_with_class_uppercase')
     })
   })
 

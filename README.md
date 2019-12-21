@@ -2,7 +2,7 @@
 Package provides a DRY way of creating cucumber steps by combining predefined set of actions, targets and areas. 
 Targets and areas contain xpath selectors while actions contain nightwatch commands. 
 In gherkin it will read as "action applied to target that is located in area": 
-**When I click button "Submit" in modal** would be composed out of *I click* action, *button "Submit"* target and *in modal* area.
+```Given I click button "Submit" in modal``` would be composed out of **I click** action, **button "Submit"** target and **in modal** area.
 The power of this tool is in automatic generation of all configured combinations for actions, targets and areas.
 
 ## Installation
@@ -224,7 +224,8 @@ Context can contain:
    - *has-text("textPart")* - maches elements, text of which contain textPart text,  
    - *text-is("textExact")* - maches elements that have text === textExact  
    N.B: all above functions has to have doublequotes around argument and argument iself should be a string that doesnt contain doublequotes inside (not even escaped)
-- **xpathToFileName** - converts xpath strings into readable valid filenames. Can be usefull to name file after xpath selector when taking screenshots
+- **xpathToFileName** - converts xpath strings into readable valid filenames. Can be usefull to name file after xpath selector when taking screenshots.  
+  ```//*[contains(concat(" ", normalize-space(@class), " "), " Active ")]``` converts to ```el_with_class_active```
 - **lastElement** - returns last element matched given xpath
 - **elementAtPosition** - returns element at given position matched given xpath
 - **illegalFilenameCharactersRegExp** - regExp for maching illegal filenames
@@ -234,3 +235,4 @@ Context can contain:
    It renders: ```//area//target1 | target2``` instead of ```//area//target1 | //area//target2```  
    Workaround for now: 'OR' should be declared in a single target selector: ```//div[@target="1" or @target="2"]```
 - Cover action, target, area combinations with unit tests
+- Decouple from nightwatch

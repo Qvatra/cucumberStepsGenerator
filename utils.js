@@ -4,17 +4,17 @@ const xpathFunctions = [
   {
     name: 'has-class',
     replace: 'contains(concat(" ", normalize-space(@class), " "), " $1 ")',
-    format: /contains\(concat\(\"\s\",\snormalize-space\(\@class\),\s\"\s\"\),/g
+    format: xpath => xpath.replace(/contains\(concat\(\"\s\",\snormalize-space\(\@class\),\s\"\s\"\),/g, 'with_class_')
   },
   {
     name: 'has-text',
     replace: 'contains(text(), "$1")',
-    format: /contains\(text\(\),/g
+    format: xpath => xpath.replace(/contains\(text\(\),/g, 'with_text_')
   },
   {
     name: 'text-is',
     replace: 'normalize-space(text())="$1"',
-    format: /normalize-space\(text\(\)\)/g
+    format: xpath => xpath.replace(/normalize-space\(text\(\)\)=/g, 'with_text_')
   }
 ]
 
@@ -22,12 +22,14 @@ module.exports = {
   extendXpath: xpath =>
     xpathFunctions.reduce((result, rule) => result.replace(funcRegEx(rule.name), rule.replace), xpath),
   xpathToFileName: xpath =>
-    xpathFunctions.reduce((result, rule) => result.replace(rule.format, `${rule.name}`), xpath)
-      .replace(/(\sand\s)/g, '_and_')
-      .replace(/(\sor\s)/g, '_or_')
-      .replace(/\"\)/g, '')
-      .replace(/\(\"|=\"|\s\"/g, '_')
-      .replace(illegalFilenameCharactersRegExp, ''),
+    xpathFunctions.reduce((result, rule) => rule.format(result), xpath)
+      .replace(/\s(and|or)\s/g, '_$1_')
+      .replace(/\*\[/g, 'el[')
+      .replace(/\@/g, 'with_')
+      .replace(/[\[\=]/g, '_')
+      .replace(/[\]\)\(]/g, '')
+      .replace(illegalFilenameCharactersRegExp, '')
+      .toLowerCase(),
   lastElement: xpath => `(${xpath})[last()]`,
   elementAtPosition: (xpath, number) => `(${xpath})[${number}]`,
   illegalFilenameCharactersRegExp,
