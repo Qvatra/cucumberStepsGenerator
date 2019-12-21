@@ -9,21 +9,22 @@ describe('utils', () => {
 
   describe('funcRegEx', () => {
     it('creates regex for function with string argument', () => {
-      expect(funcRegEx('func-name')).toEqual(/func-name\(['"]([^'"]+)['"]\)/g)
+      expect(funcRegEx('func-name')).toEqual(/func-name\(\"([^\"]+)\"\)/g)
     })
   })
 
   describe('extendXpath', () => {
-    it('extends xpath with has-class', () => {
-      expect(extendXpath('//div[has-class("class1")]')).toEqual('//div[contains(concat(" ", normalize-space(@class), " "), " class1 ")]')
+    it('extends xpath with has-class("string")', () => {
+      expect(extendXpath(`//div[has-class("class") and has-class("two classes") and has-class("specials chars ('±!@#$%^&*_=+<>,./\\|{}[]~)")]`))
+        .toEqual(`//div[contains(concat(" ", normalize-space(@class), " "), " class ") and contains(concat(" ", normalize-space(@class), " "), " two classes ") and contains(concat(" ", normalize-space(@class), " "), " specials chars ('±!@#$%^&*_=+<>,./\\|{}[]~) ")]`)
     })
 
-    it('extends xpath with has-text', () => {
-      expect(extendXpath('//div[has-text("text1")]')).toEqual('//div[contains(text(), "text1")]')
+    it('extends xpath with has-text("string")', () => {
+      expect(extendXpath(`//div[has-text("I'm some text #1")]`)).toEqual(`//div[contains(text(), "I'm some text #1")]`)
     })
 
-    it('extends xpath with text-is', () => {
-      expect(extendXpath('//div[text-is("exact-text")]')).toEqual('//div[normalize-space(text())="exact-text"]')
+    it('extends xpath with text-is("string")', () => {
+      expect(extendXpath(`//div[text-is("I'm some exact text, 100%")]`)).toEqual(`//div[normalize-space(text())="I'm some exact text, 100%"]`)
     })
   })
 

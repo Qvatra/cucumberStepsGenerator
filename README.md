@@ -1,7 +1,9 @@
 # Cucumber steps generator
-Package provides a DRY way of creating cucumber steps using combinations of predefined set of actions, targets and areas.
-Action can by applied to target that is located in area. 
-Targets and areas contain set of xpath selectors while actions contain nightwatch commands.
+Package provides a DRY way of creating cucumber steps by combining predefined set of actions, targets and areas. 
+Targets and areas contain xpath selectors while actions contain nightwatch commands. 
+In gherkin it will read as "action applied to target that is located in area": 
+**When I click button "Submit" in modal** would be composed out of *I click* action, *button "Submit"* target and *in modal* area.
+The power of this tool is in automatic generation of all configured combinations for actions, targets and areas.
 
 ## Installation
 ```npm i -D cucumber-steps-generator```
@@ -43,7 +45,8 @@ module.exports = {
   // this section provides all possible set of selectors/selector functions for the website
   xpath: {
     button: {
-      withTextOrClass: text => extendXpath(`//button[has-text("${text}") or has-class('${text}')]`),
+      // extendXpath adds functions like has-text, has-class and text-is (see utils section for details)
+      withTextOrClass: text => extendXpath(`//button[has-text("${text}") or has-class("${text}")]`),
     },
     input: {
       withName: name => extendXpath(`//*[(self::input or self::textarea) and @name="${name}"]`),
@@ -52,10 +55,10 @@ module.exports = {
       withName: name => extendXpath(`//select/option[text-is("${name}")]/parent::select`)
     },
     navbar: {
-      top: extendXpath(`//nav[has-class('navbar') and has-class('sticky-top')]`),
+      top: extendXpath(`//nav[has-class("navbar") and has-class("sticky-top")]`),
     },
     modal: {
-      content: extendXpath(`//div[has-class('modal-dialog')]`),
+      content: extendXpath(`//div[has-class("modal-dialog")]`),
     },
     link: {
       withText: text => extendXpath(`//a[has-text("${text}")]`),
@@ -71,7 +74,7 @@ module.exports = {
     gherkin: 'I redirect to {string}',
     // empty targets array means that action can not be used with targets
     targets: [],
-    // func takes ctx as first arg and then arguments for each placeholder in gherkin part so 'path' here is "/home"
+    // func takes ctx(read more in context section) as first arg and then arguments for each placeholder in gherkin part so 'path' here is "/home"
     func: ({ client, variables }, path) => client.useXpath().url(variables.url + path)
   },
   type: {
@@ -96,7 +99,7 @@ module.exports = {
     gherkin: 'link {string}', // {string} is placeholder. In gherkin it may look: And I click link "click here"
     // areas work the same way as in actions. Areas specify where target is located to solve multiple DOM matches
     areas: ['modal'],
-    // func takes ctx as first arg and then arguments for each placeholder in gherkin part so text here is "click here"
+    // func takes ctx(read more in context section) as first arg and then arguments for each placeholder in gherkin part so 'text' here is "click here"
     // xpath here refers to config.js xpath definitions
     func: ({ xpath }, text) => xpath.link.withText(text)
   },
@@ -207,7 +210,7 @@ Then(/^I click input "([^"]+)" in hamburger menu$/, (arg1) => {
 ```
 
 ## Context
-A context objext is passed as first argument to action, target and area functions.  
+A context object is passed as first argument to action, target and area functions.  
 Context can contain:  
 - **client** - nightwatch client contains all the nightwatch functions. Used in actions.  
 - **xpath** - refers to xpath section of config.js. Contains full list of xpath selectors for the website.  
@@ -220,8 +223,8 @@ Context can contain:
    - *has-class("className")* - maches elements, class of which contain className class,  
    - *has-text("textPart")* - maches elements, text of which contain textPart text,  
    - *text-is("textExact")* - maches elements that have text === textExact  
-- **xpathToFileName** - converts xpath strings into valid readable filenames. 
-   Can be usefull to name file after xpath when taking screenshots
+   N.B: all above functions has to have doublequotes around argument and argument iself should be a string that doesnt contain doublequotes inside (not even escaped)
+- **xpathToFileName** - converts xpath strings into readable valid filenames. Can be usefull to name file after xpath selector when taking screenshots
 - **lastElement** - returns last element matched given xpath
 - **elementAtPosition** - returns element at given position matched given xpath
 - **illegalFilenameCharactersRegExp** - regExp for maching illegal filenames

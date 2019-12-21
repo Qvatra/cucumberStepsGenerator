@@ -1,5 +1,5 @@
 const illegalFilenameCharactersRegExp = /[\<\>\:\"\/\\\|\?\*\s]/g
-const funcRegEx = name => new RegExp(`${name}\\(['"]([^'"]+)['"]\\)`, 'g')
+const funcRegEx = name => new RegExp(`${name}\\(\\"([^\\"]+)\\"\\)`, 'g')
 const xpathFunctions = [
   {
     name: 'has-class',
