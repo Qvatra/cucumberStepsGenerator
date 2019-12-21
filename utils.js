@@ -8,8 +8,8 @@ const xpathFunctions = [
   },
   {
     name: 'has-text',
-    replace: 'contains(text(), "$1")',
-    format: xpath => xpath.replace(/contains\(text\(\),/g, 'with_text_')
+    replace: 'contains(normalize-space(text()), "$1")',
+    format: xpath => xpath.replace(/contains\(normalize-space\(text\(\)\),/g, 'with_text_')
   },
   {
     name: 'text-is',
